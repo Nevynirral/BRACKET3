@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bracket 3 — Reglamento de Torneos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --border-bright: #3d3d55;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: #7a6030;
+    --white: #f0ede8;
+    --muted: #7a7890;
+    --red: #c94c4c;
+    --green: #4caf7a;
+    --yellow: #c9a84c;
+    --blue: #4c7ac9;
+    --orange: #c97a4c;
+    --W: #f9f6ee; --U: #4a7abf; --B: #1a1a2e; --R: #bf4a4a; --G: #3a7a4a;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-brand {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 0.95rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    margin-right: 2rem;
+    padding: 1rem 0;
+    text-decoration: none;
+  }
+  nav a:not(.nav-brand) {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 1.1rem 0.9rem;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+  }
+  nav a:not(.nav-brand):hover { color: var(--gold-light); border-bottom-color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    line-height: 0.95;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero-sub {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+  .hero-desc {
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .hero-badges {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.8s 0.35s ease both;
+  }
+  .badge {
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border-bright);
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+  }
+  .badge.active { border-color: var(--gold-dim); color: var(--gold); background: rgba(201,168,76,0.06); }
+  a.badge { text-decoration: none; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+  a.badge:hover { background: rgba(201,168,76,0.15); border-color: var(--gold); }
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 2rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 2px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: #0a0a0f;
+    font-weight: 600;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid var(--border-bright);
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-bright), transparent);
+    margin: 0;
+  }
+
+  /* SECTIONS */
+  section {
+    padding: 5rem 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+
+  /* VERIFICADOR */
+  #verificador { padding-top: 5rem; padding-bottom: 5rem; max-width: 1100px; margin: 0 auto; padding-left: 2rem; padding-right: 2rem; }
+  .verif-header { text-align: center; margin-bottom: 3rem; }
+  .verif-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    color: var(--white);
+    margin-bottom: 0.75rem;
+  }
+  .verif-header p { color: var(--muted); max-width: 580px; margin: 0 auto; }
+
+  .verif-checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+  .check-pill {
+    padding: 0.35rem 0.85rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.06em;
+  }
+
+  .verif-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  @media (max-width: 700px) { .verif-grid { grid-template-columns: 1fr; } }
+
+  .verif-field label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.6rem;
+  }
+
+  .autocomplete-wrap { position: relative; }
+  .autocomplete-wrap input,
+  .verif-field input,
+  .verif-field textarea,
+  .verif-field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--white);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .autocomplete-wrap input:focus,
+  .verif-field input:focus,
+  .verif-field textarea:focus,
+  .verif-field select:focus { border-color: var(--gold); }
+
+  .autocomplete-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border-bright);
+    border-top: none;
+    border-radius: 0 0 2px 2px;
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 50;
+    display: none;
+  }
+  .autocomplete-dropdown.open { display: block; }
+  .autocomplete-item {
+    padding: 0.55rem 1rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .autocomplete-item:hover { background: rgba(201,168,76,0.12); }
+  .autocomplete-item .ci-pills { display: flex; gap: 3px; }
+  .ci-pip {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .ci-W { background: var(--W); }
+  .ci-U { background: var(--U); }
+  .ci-B { background: #6b4c9e; }
+  .ci-R { background: var(--R); }
+  .ci-G { background: var(--G); }
+
+  .color-id-pills {
+    display: flex; gap: 6px; align-items: center;
+    margin-top: 0.6rem;
+    min-height: 1.5rem;
+  }
+  .color-pill {
+    padding: 0.2rem 0.65rem;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+  .color-pill.W { background: var(--W); color: #222; }
+  .color-pill.U { background: var(--U); color: #fff; }
+  .color-pill.B { background: #6b4c9e; color: #fff; }
+  .color-pill.R { background: var(--R); color: #fff; }
+  .color-pill.G { background: var(--G); color: #fff; }
+  .color-pill.C { background: var(--surface2); border: 1px solid var(--border-bright); color: var(--muted); }
+
+  .verif-field-full { grid-column: 1 / -1; }
+  .verif-field textarea { min-height: 200px; }
+
+  .btn-verif {
+    width: 100%;
+    padding: 1rem;
+    background: var(--gold);
+    color: #0a0a0f;
+    border: none;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .btn-verif:hover { background: var(--gold-light); }
+  .btn-verif:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* RESULTS */
+  #verif-results { margin-top: 2rem; display: none; }
+  .result-banner {
+    padding: 1.5rem 2rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'Cinzel', serif;
+  }
+  .result-banner.ok { background: rgba(76,175,122,0.12); border: 1px solid rgba(76,175,122,0.3); }
+  .result-banner.warn { background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); }
+  .result-banner.fail { background: rgba(201,76,76,0.1); border: 1px solid rgba(201,76,76,0.35); }
+  .result-banner .rb-icon { font-size: 2rem; }
+  .result-banner .rb-title { font-size: 1.1rem; font-weight: 600; }
+  .result-banner .rb-sub { font-size: 0.78rem; letter-spacing: 0.08em; opacity: 0.7; margin-top: 0.2rem; }
+  .result-banner.ok .rb-title { color: var(--green); }
+  .result-banner.warn .rb-title { color: var(--yellow); }
+  .result-banner.fail .rb-title { color: var(--red); }
+
+  .result-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+  .result-check {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .result-check.pass { border-left: 3px solid var(--green); }
+  .result-check.fail { border-left: 3px solid var(--red); }
+  .result-check.warn { border-left: 3px solid var(--yellow); }
+  .result-check .rc-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .result-check .rc-label { font-family: 'Cinzel', serif; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .result-check .rc-val { font-size: 0.95rem; color: var(--white); margin-top: 0.2rem; }
+
+  .violations-list { margin-top: 1.5rem; }
+  .viol-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--red);
+    border-radius: 2px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .viol-item h4 { font-family: 'Cinzel', serif; font-size: 0.8rem; color: var(--red); letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+  .viol-item p { font-size: 0.9rem; color: var(--muted); }
+
+  /* DEFINITIONS */
+  .defs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+  .def-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .def-card:hover { border-color: var(--gold-dim); transform: translateY(-2px); }
+  .def-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+  .def-num { font-family: 'Cinzel', serif; font-size: 0.65rem; color: var(--gold); letter-spacing: 0.12em; margin-bottom: 0.4rem; }
+  .def-title { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--white); margin-bottom: 0.75rem; }
+  .def-body { color: var(--muted); font-size: 0.92rem; line-height: 1.6; display: none; }
+  .def-body.open { display: block; }
+  .def-hint { font-size: 0.75rem; color: var(--gold-dim); font-family: 'Cinzel', serif; letter-spacing: 0.06em; margin-top: 0.75rem; }
+
+  /* RULES */
+  .rule-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    scroll-margin-top: 5rem;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .rule-header {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .rule-header:hover { background: rgba(201,168,76,0.04); }
+  .rule-num { font-family: 'Cinzel', serif; font-size: 0.7rem; color: var(--gold); letter-spacing: 0.12em; flex-shrink: 0; }
+  .rule-name { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--white); flex: 1; }
+  .rule-chevron { color: var(--muted); transition: transform 0.2s; font-size: 0.8rem; }
+  .rule-chevron.open { transform: rotate(180deg); }
+  .rule-body { padding: 0 1.5rem 1.5rem; display: none; }
+  .rule-body.open { display: block; }
+  .rule-body p { color: var(--muted); margin-bottom: 1rem; }
+  .rule-body ul { padding-left: 1.5rem; color: var(--muted); margin-bottom: 1rem; }
+  .rule-body ul li { margin-bottom: 0.4rem; }
+  .rule-body strong { color: var(--white); }
+
+  /* TABLE */
+  .rule-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 1rem 0; }
+  .rule-table th { font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-bright); text-align: left; }
+  .rule-table td { padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border); color: var(--muted); }
+  .rule-table tr:last-child td { border-bottom: none; }
+  .rule-table td:first-child { color: var(--white); font-weight: 600; }
+
+  /* GAME CHANGERS GRID */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.75rem; margin-top: 1.25rem; }
+  .card-thumb {
+    aspect-ratio: 2/3;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: transform 0.15s, border-color 0.15s;
+    cursor: pointer;
+    position: relative;
+  }
+  .card-thumb:hover { transform: scale(1.04); border-color: var(--gold); z-index: 2; }
+  .card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card-thumb .card-name-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    padding: 1.2rem 0.4rem 0.4rem;
+    font-size: 0.65rem;
+    color: var(--white);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .card-thumb:hover .card-name-overlay { opacity: 1; }
+
+  /* COMBOS */
+  .combo-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+  .combo-filters label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 0.25rem;
+  }
+  .color-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 700;
+    font-size: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .color-btn:hover { transform: scale(1.1); }
+  .color-btn.active { border-color: white; transform: scale(1.1); }
+  .color-btn.W { background: var(--W); color: #333; }
+  .color-btn.U { background: var(--U); color: #fff; }
+  .color-btn.B { background: #6b4c9e; color: #fff; }
+  .color-btn.R { background: var(--R); color: #fff; }
+  .color-btn.G { background: var(--G); color: #fff; }
+  .color-btn.C { background: var(--surface2); border-color: var(--border-bright); color: var(--muted); }
+  .type-btn {
+    padding: 0.3rem 0.8rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    color: var(--muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.06em;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .type-btn.active, .type-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+
+  .combo-search-wrap {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  .combo-search-wrap input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--white);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    padding: 0.75rem 1rem 0.75rem 2.75rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .combo-search-wrap input:focus { border-color: var(--gold); }
+  .combo-search-icon {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 1rem;
+  }
+
+  .combo-count {
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .combo-count span { color: var(--gold); }
+
+  .combos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+  .combo-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .combo-card:hover { border-color: var(--gold-dim); transform: translateX(2px); }
+  .combo-card-imgs { display: flex; gap: -8px; flex-shrink: 0; }
+  .combo-card-img {
+    width: 44px; height: 62px;
+    border-radius: 3px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+    margin-left: -8px;
+  }
+  .combo-card-img:first-child { margin-left: 0; }
+  .combo-card-info { flex: 1; min-width: 0; }
+  .combo-card-names {
+    font-size: 0.85rem;
+    color: var(--white);
+    margin-bottom: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .combo-card-names .plus { color: var(--gold); margin: 0 0.3rem; }
+  .combo-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .combo-tag {
+    padding: 0.15rem 0.5rem;
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.04em;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* PAGINATION */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .page-btn {
+    min-width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    transition: all 0.15s;
+    padding: 0 0.5rem;
+  }
+  .page-btn:hover, .page-btn.active { border-color: var(--gold); color: var(--gold); }
+  .page-info { font-family: 'Cinzel', serif; font-size: 0.72rem; color: var(--muted); }
+
+  /* SANCTIONS */
+  .sanction-table-wrap { overflow-x: auto; margin-bottom: 2rem; }
+  .procedure-list { list-style: none; padding: 0; }
+  .procedure-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    border-left: 3px solid var(--gold-dim);
+  }
+  .procedure-item h4 { font-family: 'Cinzel', serif; font-size: 0.82rem; color: var(--gold); letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+  .procedure-item p, .procedure-item li { color: var(--muted); font-size: 0.92rem; }
+  .procedure-item ul { padding-left: 1.25rem; margin-top: 0.4rem; }
+  .procedure-item li { margin-bottom: 0.3rem; }
+
+  /* FAQ */
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+  }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 1.25rem 0;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: var(--white);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    transition: color 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .faq-q:hover { color: var(--gold); }
+  .faq-chevron { flex-shrink: 0; transition: transform 0.2s; color: var(--muted); }
+  .faq-chevron.open { transform: rotate(180deg); color: var(--gold); }
+  .faq-a { display: none; padding-bottom: 1.25rem; color: var(--muted); line-height: 1.75; }
+  .faq-a.open { display: block; }
+
+  /* CONTACT FORM */
+  .contact-form {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 2.5rem;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .form-row { margin-bottom: 1.25rem; }
+  .form-row label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .form-row input,
+  .form-row select,
+  .form-row textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--white);
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-row input:focus,
+  .form-row select:focus,
+  .form-row textarea:focus { border-color: var(--gold); }
+  .form-row textarea { min-height: 140px; resize: vertical; }
+  .char-count { text-align: right; font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+  .footer-inner { max-width: 1100px; margin: 0 auto; }
+  .version-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 1rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+  }
+  .version-badge span { color: var(--gold); }
+  .footer-links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+  .footer-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color 0.15s; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-legal { font-size: 0.78rem; color: var(--muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+  /* CHANGELOG MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 4px;
+    max-width: 640px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 2rem;
+    position: relative;
+  }
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .modal-close:hover { color: var(--white); }
+  .modal h3 { font-family: 'Cinzel', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: 1.5rem; letter-spacing: 0.08em; }
+  .changelog-item { margin-bottom: 1.5rem; }
+  .changelog-item h4 { font-family: 'Cinzel', serif; font-size: 0.82rem; color: var(--white); margin-bottom: 0.5rem; letter-spacing: 0.06em; }
+  .changelog-item ul { padding-left: 1.25rem; }
+  .changelog-item li { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.35rem; }
+
+  /* SCROLL TO TOP */
+  #scrolltop {
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    width: 44px; height: 44px;
+    background: var(--gold);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    transition: all 0.2s;
+  }
+  #scrolltop.visible { display: flex; }
+  #scrolltop:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION WRAPPERS */
+  .section-wrap {
+    border-top: 1px solid var(--border);
+    padding: 5rem 2rem;
+  }
+  .section-wrap > * { max-width: 1100px; margin-left: auto; margin-right: auto; }
+
+  /* LOADING SPINNER */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(201,168,76,0.3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 0.5rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .warn-notice {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 2px;
+    padding: 1rem 1.25rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .warn-notice .wi { color: var(--gold); font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+
+  @media (max-width: 480px) {
+    nav a:not(.nav-brand) { padding: 1rem 0.6rem; font-size: 0.65rem; }
+    .hero h1 { font-size: 3rem; }
+    .combos-grid { grid-template-columns: 1fr; }
+    .contact-form { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="nav-brand">Bracket 3</a>
+  <a href="#verificador">Verificador</a>
+  <a href="#definiciones">Definiciones</a>
+  <a href="#reglas-armado">Reglas</a>
+  <a href="#combos">Combos</a>
+  <a href="#sanciones">Sanciones</a>
+  <a href="#casos-especiales">Casos Especiales</a>
+  <a href="#faq">FAQ</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <p class="hero-eyebrow">Versión 3.3 &nbsp;·&nbsp; Reglamento de Torneos</p>
+  <h1>BRACKET <span>3</span></h1>
+  <p class="hero-desc">Reglamento para torneos de Commander con restricción de armado. Competitivo, verificable y accesible.</p>
+  <div class="hero-badges">
+    <a href="#verificador" class="badge active">Banlist Commander</a>
+    <a href="#verificador" class="badge active">Identidad de Color</a>
+    <a href="#verificador" class="badge active">Singleton</a>
+    <a href="#rule-gc" class="badge active">Game Changers ≤3</a>
+    <a href="#rule-turnos" class="badge active">Turnos Extra</a>
+    <a href="#rule-mld" class="badge active">MLD</a>
+    <a href="#combos" class="badge active">969 Combos</a>
+  </div>
+  <div class="hero-ctas">
+    <a href="#verificador" class="btn btn-primary">🔍 Verificar mi Decklist</a>
+    <a href="#reglas-armado" class="btn btn-outline">Explorar Reglas</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- VERIFICADOR -->
+<div class="section-wrap" id="verificador">
+  <div>
+    <div class="verif-header">
+      <h2>Verificador de Decklist</h2>
+      <p>Pega tu lista de cartas y verifica si cumple con todas las reglas de Commander + Bracket 3 antes de tu próximo torneo.</p>
+    </div>
+    <div class="verif-checks">
+      <span class="check-pill">✓ Banlist Commander</span>
+      <span class="check-pill">✓ Identidad de Color</span>
+      <span class="check-pill">✓ Singleton</span>
+      <span class="check-pill">✓ Game Changers ≤3</span>
+      <span class="check-pill">✓ Turnos Extra</span>
+      <span class="check-pill">✓ 969 Combos</span>
+      <span class="check-pill">✓ MLD</span>
+    </div>
+    <div class="verif-grid">
+      <div class="verif-field">
+        <label>Tu Comandante (recomendado)</label>
+        <div class="autocomplete-wrap">
+          <input type="text" id="cmdr-input" placeholder="Ej: Atraxa, Praetors' Voice" autocomplete="off">
+          <div class="autocomplete-dropdown" id="cmdr-dropdown"></div>
+        </div>
+        <div class="color-id-pills" id="cmdr-color-pills"></div>
+      </div>
+      <div class="verif-field">
+        <label>Segundo Comandante (Partner, etc.)</label>
+        <div class="autocomplete-wrap">
+          <input type="text" id="cmdr2-input" placeholder="Solo si tienes Partner" autocomplete="off">
+          <div class="autocomplete-dropdown" id="cmdr2-dropdown"></div>
+        </div>
+        <div class="color-id-pills" id="cmdr2-color-pills"></div>
+      </div>
+      <div class="verif-field verif-field-full">
+        <label>Decklist (99 cartas restantes)</label>
+        <textarea id="decklist-input" placeholder="Pega tu lista aquí. Formatos soportados:&#10;1 Nombre de Carta&#10;Moxfield, Archidekt, Topdeck.gg, Mana Box, Arena, MTGO&#10;&#10;Compatible con cartas de doble cara, foil, edición y texto plano."></textarea>
+      </div>
+    </div>
+    <button class="btn-verif" id="btn-verificar" onclick="verificarDecklist()">
+      🔍 Verificar Decklist
+    </button>
+
+    <div id="verif-results">
+      <div id="result-banner" class="result-banner"></div>
+      <div id="result-checks" class="result-checks"></div>
+      <div id="violations-list" class="violations-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DEFINICIONES -->
+<div class="section-wrap" id="definiciones">
+  <div>
+    <div class="section-header">
+      <span class="section-num">§ 0</span>
+      <h2 class="section-title">Definiciones</h2>
+    </div>
+    <p style="color:var(--muted);margin-bottom:2rem;">Para efectos del presente reglamento, se entenderá por:</p>
+    <div class="defs-grid">
+      <div class="def-card" onclick="toggleDef(this)">
+        <div class="def-icon">🏆</div>
+        <div class="def-num">0.1</div>
+        <div class="def-title">Condición de Victoria (Win Condition)</div>
+        <div class="def-body">Cualquier efecto o combinación de efectos que resulte directamente en que un jugador gane la partida o que todos sus oponentes pierdan simultáneamente, sin requerir pasos adicionales significativos.</div>
+        <div class="def-hint">Toca para ver más ▾</div>
+      </div>
+      <div class="def-card" onclick="toggleDef(this)">
+        <div class="def-icon">🔒</div>
+        <div class="def-num">0.2</div>
+        <div class="def-title">Lockout</div>
+        <div class="def-body">Estado de juego en el cual uno o más oponentes quedan prácticamente incapaces de realizar acciones relevantes para avanzar su posición en la partida, de forma sostenida y sin una vía razonable de recuperación.</div>
+        <div class="def-hint">Toca para ver más ▾</div>
+      </div>
+      <div class="def-card" onclick="toggleDef(this)">
+        <div class="def-icon">♾️</div>
+        <div class="def-num">0.3</div>
+        <div class="def-title">Recurso Infinito</div>
+        <div class="def-body">Cualquier combinación de cartas y/o habilidades que permita generar una cantidad ilimitada (o arbitrariamente grande) de un recurso del juego, incluyendo pero no limitándose a: maná, robo de cartas, tokens, daño, vida, contadores o triggers.</div>
+        <div class="def-hint">Toca para ver más ▾</div>
+      </div>
+      <div class="def-card" onclick="toggleDef(this)">
+        <div class="def-icon">⚡</div>
+        <div class="def-num">0.4</div>
+        <div class="def-title">Combo</div>
+        <div class="def-body">Combinación de dos o más cartas que, al interactuar entre sí, producen un efecto significativamente mayor que la suma de sus partes individuales, resultando típicamente en una condición de victoria, lockout o recurso infinito.</div>
+        <div class="def-hint">Toca para ver más ▾</div>
+      </div>
+      <div class="def-card" onclick="toggleDef(this)">
+        <div class="def-icon">🔑</div>
+        <div class="def-num">0.5</div>
+        <div class="def-title">Pieza Clave</div>
+        <div class="def-body">Carta cuya presencia en el campo de batalla, cementerio, mano o exilio es indispensable para que un combo funcione. Se considera que un combo tiene múltiples piezas clave cuando la ausencia de cualquiera de ellas impide su ejecución.</div>
+        <div class="def-hint">Toca para ver más ▾</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGLAS DE ARMADO -->
+<div class="section-wrap" id="reglas-armado">
+  <div>
+    <div class="section-header">
+      <span class="section-num">§ 1</span>
+      <h2 class="section-title">Restricciones de Armado</h2>
+    </div>
+    <p style="color:var(--muted);margin-bottom:2rem;">Las siguientes restricciones aplican a la construcción del mazo y serán verificadas antes del inicio del torneo.</p>
+
+    <div class="rule-block">
+      <div class="rule-header" onclick="toggleRule(this)">
+        <span class="rule-num">1.1</span>
+        <span class="rule-name">Prohibición de "Early Combos" de dos cartas</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Queda prohibido incluir en un mazo combinaciones de dos cartas que al interactuar, puedan resultar en una condición de victoria, lockout o recurso infinito, generalmente durante los primeros seis turnos de una partida.</p>
+        <p><strong>Criterios de evaluación:</strong></p>
+        <ul><li>Combos de exactamente 2 cartas listados en el Anexo de combos prohibidos (969 combos catalogados por la comunidad).</li></ul>
+        <p><strong>Ejemplos de combinaciones prohibidas:</strong></p>
+        <table class="rule-table">
+          <thead><tr><th>Combo</th><th>Resultado</th></tr></thead>
+          <tbody>
+            <tr><td>Thassa's Oracle + Demonic Consultation</td><td>Win Condition</td></tr>
+            <tr><td>Kinnan, Bonder Prodigy + Basalt Monolith</td><td>Maná Infinito</td></tr>
+            <tr><td>Heliod, Sun-Crowned + Walking Ballista</td><td>Daño Infinito</td></tr>
+          </tbody>
+        </table>
+        <p><a href="#combos" style="color:var(--gold)">Ver lista completa de 969 combos prohibidos →</a></p>
+      </div>
+    </div>
+
+    <div class="rule-block" id="rule-gc">
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Cada mazo podrá incluir un máximo de <strong>tres (3) Game Changers</strong>, de acuerdo con la lista oficial publicada por Wizards of the Coast.</p>
+        <div class="warn-notice">
+          <span class="wi">⚠️</span>
+          <span>Si tu mazo incluye más de 3 Game Changers, debes retirar los extras antes del torneo. El verificador de decklist puede ayudarte a identificarlos.</span>
+        </div>
+        <p>Lista de 53 Game Changers:</p>
+        <div class="card-grid" id="gc-grid">
+          <!-- populated by JS -->
+        </div>
+        <div id="gc-load-more" style="text-align:center;margin-top:1rem;display:none;">
+          <button class="btn btn-outline" onclick="loadMoreGC()">Cargar más →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-block" id="rule-mld">
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Quedan prohibidas las cartas cuyo efecto tenga como objetivo principal eliminar, inutilizar o restringir de manera significativa la capacidad de los jugadores de producir maná a través de tierras.</p>
+        <p><strong>Criterios de evaluación:</strong></p>
+        <ul>
+          <li>Destruyan, exilien o devuelvan a la mano cuatro (4) o más tierras por jugador sin proporcionar reemplazo equivalente.</li>
+          <li>Impidan el giro de tierras de manera generalizada y sostenida.</li>
+          <li>Modifiquen el tipo de todas o la mayoría de las tierras de los oponentes, eliminando su capacidad de producir maná de color.</li>
+        </ul>
+        <div class="card-grid" id="mld-grid"></div>
+        <div id="mld-load-more" style="text-align:center;margin-top:1rem;display:none;">
+          <button class="btn btn-outline" onclick="loadMoreMLD()">Cargar más →</button>
+        </div>
+        <p style="margin-top:1rem;"><em>El Head Judge del torneo tiene la facultad de determinar si una carta no listada explícitamente viola el espíritu de esta regla.</em></p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-header" onclick="toggleRule(this)">
+        <span class="rule-num">1.4</span>
+        <span class="rule-name">Cartas Individuales de Destrucción de Tierras</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Las cartas que destruyen una única tierra por activación o trigger (como Strip Mine, Wasteland, Ghost Quarter, Stone Rain, etc.) están <strong>permitidas individualmente</strong>, sujetas a las restricciones de la Sección 2.2.</p>
+      </div>
+    </div>
+
+    <div class="section-header" style="margin-top:3rem;">
+      <span class="section-num">§ 2</span>
+      <h2 class="section-title">Restricciones de Juego</h2>
+    </div>
+    <p style="color:var(--muted);margin-bottom:2rem;">Las siguientes restricciones aplican a las acciones realizadas durante la partida.</p>
+
+    <div class="rule-block" id="rule-turnos">
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Queda prohibido el uso de combos o estrategias cuyo objetivo sea encadenar turnos adicionales de manera indefinida o en cantidad suficiente para establecer una victoria inevitable sin interacción.</p>
+        <p><strong>Combinaciones prohibidas (lista no exhaustiva):</strong></p>
+        <ul>
+          <li>Time Warp + Archaeomancer + cualquier método de bounce repetible</li>
+          <li>Time Warp + Panoptic Mirror</li>
+          <li>Nexus of Fate en mazos diseñados para recasting repetido</li>
+        </ul>
+        <p><em>El uso ocasional de un efecto de turno extra no viola esta regla. La prohibición aplica a estrategias diseñadas específicamente para acumular o repetir estos efectos.</em></p>
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-header" onclick="toggleRule(this)">
+        <span class="rule-num">2.2</span>
+        <span class="rule-name">Prohibición de Destrucción Sistemática de Tierras</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Queda prohibido el uso de combos o estrategias cuyo objetivo principal sea eliminar repetidamente las tierras de los oponentes.</p>
+        <p><strong>Combinaciones prohibidas:</strong></p>
+        <ul>
+          <li>Strip Mine / Wasteland + Crucible of Worlds</li>
+          <li>Strip Mine / Wasteland + Ramunap Excavator</li>
+          <li>Cualquier combinación que permita destruir más de una tierra por vuelta de mesa de manera sostenida</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMBOS -->
+<div class="section-wrap" id="combos">
+  <div>
+    <div class="section-header">
+      <span class="section-num">§ Anexo</span>
+      <h2 class="section-title">Combos Prohibidos</h2>
+    </div>
+    <p style="color:var(--muted);margin-bottom:0.5rem;">Combinaciones de 2 cartas prohibidas bajo la Regla 1.1. Lista basada en EDHREC y Commander Spellbook.</p>
+    <div class="warn-notice" style="margin-top:1rem;">
+      <span class="wi">⚠️</span>
+      <span>Si tu mazo contiene ambas cartas de cualquiera de estos combos, debes retirar al menos una de ellas antes de tu próximo torneo.</span>
+    </div>
+
+    <div class="combo-filters" id="combo-color-filters">
+      <label>Color:</label>
+      <button class="color-btn W active" data-color="W" onclick="toggleColorFilter('W', this)" title="Blanco">W</button>
+      <button class="color-btn U active" data-color="U" onclick="toggleColorFilter('U', this)" title="Azul">U</button>
+      <button class="color-btn B active" data-color="B" onclick="toggleColorFilter('B', this)" title="Negro">B</button>
+      <button class="color-btn R active" data-color="R" onclick="toggleColorFilter('R', this)" title="Rojo">R</button>
+      <button class="color-btn G active" data-color="G" onclick="toggleColorFilter('G', this)" title="Verde">G</button>
+      <button class="color-btn C" data-color="C" onclick="toggleColorFilter('C', this)" title="Incoloro">C</button>
+    </div>
+
+    <div class="combo-filters" id="combo-type-filters">
+      <label>Tipo:</label>
+      <button class="type-btn active" data-type="all" onclick="setTypeFilter('all', this)">Todos</button>
+      <button class="type-btn" data-type="win" onclick="setTypeFilter('win', this)">Win Condition</button>
+      <button class="type-btn" data-type="mana" onclick="setTypeFilter('mana', this)">Maná Infinito</button>
+      <button class="type-btn" data-type="damage" onclick="setTypeFilter('damage', this)">Daño</button>
+      <button class="type-btn" data-type="draw" onclick="setTypeFilter('draw', this)">Card Draw</button>
+      <button class="type-btn" data-type="tokens" onclick="setTypeFilter('tokens', this)">Tokens</button>
+      <button class="type-btn" data-type="lock" onclick="setTypeFilter('lock', this)">Lock</button>
+    </div>
+
+    <div class="combo-search-wrap">
+      <span class="combo-search-icon">🔍</span>
+      <input type="text" id="combo-search" placeholder="Buscar por nombre de carta..." oninput="filterCombos()">
+    </div>
+
+    <div class="combo-count">Mostrando <span id="combo-count-shown">0</span> de <span id="combo-count-total">969</span> combos</div>
+
+    <div class="combos-grid" id="combos-grid"></div>
+    <div class="pagination" id="combos-pagination"></div>
+  </div>
+</div>
+
+<!-- SANCIONES -->
+<div class="section-wrap" id="sanciones">
+  <div>
+    <div class="section-header">
+      <span class="section-num">§ 3</span>
+      <h2 class="section-title">Sanciones</h2>
+    </div>
+    <div class="sanction-table-wrap">
+      <table class="rule-table">
+        <thead>
+          <tr><th>Infracción</th><th>Primera Ocurrencia</th><th>Reincidencia</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1.1 Combo prohibido en armado</td><td>Regresión + Sustitución + Pérdida de turno</td><td>Game Loss</td></tr>
+          <tr><td>1.2 Exceso de Game Changers</td><td>Regresión + Sustitución + Pérdida de turno</td><td>Game Loss</td></tr>
+          <tr><td>1.3 Carta prohibida de MLD</td><td>Regresión + Sustitución + Pérdida de turno</td><td>Game Loss</td></tr>
+          <tr><td>2.1 "Early Combo" ejecutado</td><td>Regresión + Pérdida de turno</td><td>Game Loss</td></tr>
+          <tr><td>2.2 Turnos extra encadenados</td><td>Regresión + Pérdida de turno</td><td>Game Loss</td></tr>
+          <tr><td>2.3 Destrucción sistemática de tierras</td><td>Warning + Regresión</td><td>Pérdida de turno; luego Game Loss</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="font-family:'Cinzel',serif;font-size:1rem;color:var(--gold);letter-spacing:0.08em;margin-bottom:1.5rem;">Procedimientos</h3>
+    <ul class="procedure-list">
+      <li class="procedure-item">
+        <h4>3.2 — Procedimiento de Regresión</h4>
+        <p>Se revierte el estado del juego al momento inmediatamente anterior a la acción ilegal. Todas las cartas involucradas regresan a sus zonas originales. Si la regresión completa no es posible, el Head Judge determinará la mejor aproximación razonable.</p>
+      </li>
+      <li class="procedure-item">
+        <h4>3.3 — Procedimiento de Sustitución</h4>
+        <ul>
+          <li>La carta infractora se retira del mazo y se aparta por el resto del torneo.</li>
+          <li>Se sustituye por una tierra básica compatible con la identidad de color del comandante.</li>
+          <li>Si el comandante es incoloro, se sustituye por Wastes.</li>
+          <li>La sustitución aplica para el resto del torneo, no solo la partida en curso.</li>
+        </ul>
+      </li>
+      <li class="procedure-item">
+        <h4>3.4 — Pérdida de Turno</h4>
+        <p>El jugador sancionado pierde su próximo turno completo: sin mantenimiento, sin robo, sin fases principales, sin combate, sin fases finales.</p>
+      </li>
+      <li class="procedure-item">
+        <h4>3.5 — Game Loss</h4>
+        <p>El jugador pierde la partida en curso inmediatamente. En formatos de una sola partida por ronda, equivale a perder la ronda.</p>
+      </li>
+      <li class="procedure-item">
+        <h4>3.6 — Descalificación</h4>
+        <p>El Head Judge puede emitir descalificación en casos de tres o más infracciones, conducta antideportiva, intento deliberado de evadir reglas o fraude en la declaración del mazo.</p>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- CASOS ESPECIALES -->
+<div class="section-wrap" id="casos-especiales">
+  <div>
+    <div class="section-header">
+      <span class="section-num">§ 5</span>
+      <h2 class="section-title">Casos Especiales y Aclaraciones</h2>
+    </div>
+    <div class="rule-block">
+      <div class="rule-header" onclick="toggleRule(this)">
+        <span class="rule-num">5.1</span>
+        <span class="rule-name">Comandantes como Pieza de Combo</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Si el comandante del jugador es una pieza clave de un combo prohibido por 1.1, el jugador no puede usar ese comandante en torneos bajo este reglamento. Debe elegir un comandante diferente o ajustar su mazo para eliminar las otras piezas del combo.</p>
+      </div>
+    </div>
+    <div class="rule-block">
+      <div class="rule-header" onclick="toggleRule(this)">
+        <span class="rule-num">5.2</span>
+        <span class="rule-name">Combos Condicionales</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Si dos cartas producen un resultado muy similar o equivalente al de alguno de los 969 combos registrados, y su suma de Mana Value es igual o menor a la del combo listado, se puede considerar prohibido aunque no aparezca explícitamente en la lista. La dificultad de ejecución o las condiciones específicas requeridas no son un atenuante válido.</p>
+      </div>
+    </div>
+    <div class="rule-block">
+      <div class="rule-header" onclick="toggleRule(this)">
+        <span class="rule-num">5.3</span>
+        <span class="rule-name">Combos Descubiertos Durante el Juego</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Si durante una partida se descubre que un jugador tiene un combo prohibido en su mazo, pero no intentó ejecutarlo, se aplica la sanción de armado (1.1) al final de la partida en curso. La partida continúa normalmente y el jugador debe sustituir las cartas antes de la siguiente ronda.</p>
+      </div>
+    </div>
+    <div class="rule-block">
+      <div class="rule-header" onclick="toggleRule(this)">
+        <span class="rule-num">5.4</span>
+        <span class="rule-name">Interacción con Reglas de Commander</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Este reglamento se aplica además de las reglas oficiales del formato Commander. En caso de conflicto, la restricción más severa prevalece. Las banlist oficiales de Commander siguen vigentes.</p>
+      </div>
+    </div>
+    <div class="rule-block">
+      <div class="rule-header" onclick="toggleRule(this)">
+        <span class="rule-num">5.5</span>
+        <span class="rule-name">Cartas con Múltiples Modos o Usos</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-body">
+        <p>Si una carta tiene múltiples usos y solo uno de ellos forma parte de un combo prohibido, la carta está prohibida si el combo ilegal es una línea de juego razonable. El Head Judge evaluará si la inclusión de la carta tiene justificación independiente del combo prohibido.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="section-wrap" id="faq">
+  <div>
+    <div class="section-header">
+      <span class="section-num">§ FAQ</span>
+      <h2 class="section-title">Preguntas Frecuentes</h2>
+    </div>
+    <div id="faq-list"></div>
+  </div>
+</div>
+
+<!-- SUGERENCIAS -->
+<div class="section-wrap" id="sugerencias">
+  <div>
+    <div class="section-header">
+      <span class="section-num">§</span>
+      <h2 class="section-title">Sugerencias y Reportes</h2>
+    </div>
+    <p style="color:var(--muted);margin-bottom:2rem;text-align:center;">Ayuda a mejorar el reglamento. Tu retroalimentación es fundamental para el formato.</p>
+    <div class="contact-form">
+      <div class="form-row">
+        <label>Nombre (opcional)</label>
+        <input type="text" id="f-name" placeholder="Tu nombre">
+      </div>
+      <div class="form-row">
+        <label>Email (opcional)</label>
+        <input type="email" id="f-email" placeholder="tu@email.com">
+      </div>
+      <div class="form-row">
+        <label>Tipo de sugerencia</label>
+        <select id="f-type">
+          <option>Sugerir carta (Game Changer, MLD, etc.)</option>
+          <option>Reportar combo faltante</option>
+          <option>Sugerencia de regla</option>
+          <option>Reportar un error en la herramienta</option>
+          <option>Comentario general</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Mensaje *</label>
+        <textarea id="f-msg" placeholder="Describe tu sugerencia o reporte..." oninput="updateCharCount(this, 'f-count')"></textarea>
+        <div class="char-count"><span id="f-count">0</span>/2000</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="submitForm()">Enviar Sugerencia</button>
+      <div id="form-success" style="display:none;text-align:center;margin-top:1rem;color:var(--green);font-family:'Cinzel',serif;font-size:0.85rem;letter-spacing:0.1em;">✓ Sugerencia enviada. ¡Gracias!</div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="version-badge">Versión <span>3.3</span> &nbsp;·&nbsp; Abril 2026</div>
+    <div class="footer-links">
+      <a href="#" onclick="openChangelog()">Notas de versión</a>
+      <a href="https://edhrec.com/combos" target="_blank">EDHREC Combos</a>
+      <a href="https://commanderspellbook.com/" target="_blank">Commander Spellbook</a>
+      <a href="https://scryfall.com/" target="_blank">Scryfall</a>
+    </div>
+    <p class="footer-legal">Base de datos de combos proporcionada por EDHREC y Commander Spellbook. Imágenes de cartas a través de Scryfall. Portions of the materials used are property of Wizards of the Coast. ©Wizards of the Coast LLC. This site is unofficial Fan Content permitted under the Fan Content Policy.</p>
+  </div>
+</footer>
+
+<!-- CHANGELOG MODAL -->
+<div class="modal-overlay" id="changelog-modal" onclick="closeChangelog(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeChangelog()">✕</button>
+    <h3>Notas de Versión</h3>
+    <div class="changelog-item">
+      <h4>v3.3 — Abril 2026</h4>
+      <ul>
+        <li>Filtro de identidad de color en la sección de combos</li>
+        <li>Botón "Solo incoloros" para filtrar combos sin identidad de color</li>
+        <li>Identidad de color precalculada para los 969 combos</li>
+      </ul>
+    </div>
+    <div class="changelog-item">
+      <h4>v3.2 — Abril 2026</h4>
+      <ul>
+        <li>Nuevo campo dedicado de comandante con autocompletado sobre 2950 commanders</li>
+        <li>Detección automática de Partner, Partner with, Choose a Background, Friends Forever, etc.</li>
+        <li>Identidad de color combinada visible con píldoras de color</li>
+        <li>Fix de markers exóticos en nombres de cartas</li>
+      </ul>
+    </div>
+    <div class="changelog-item">
+      <h4>v3.1 — Abril 2026</h4>
+      <ul>
+        <li>Detección de 49 cartas de turno extra con sistema gradual de alerta</li>
+        <li>428 nombres alternos resueltos (Universes Beyond, Final Fantasy, LOTR, Marvel, etc.)</li>
+        <li>Sección de Preguntas Frecuentes con 15 preguntas</li>
+        <li>Formulario de sugerencias público</li>
+      </ul>
+    </div>
+    <div class="changelog-item">
+      <h4>v3.0 — Marzo 2026</h4>
+      <ul>
+        <li>Lanzamiento del reglamento Bracket 3</li>
+        <li>Verificador de decklists multiformato</li>
+        <li>969 combos prohibidos de dos cartas</li>
+        <li>53 Game Changers, 127 cartas MLD</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<button id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Ir arriba">↑</button>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
